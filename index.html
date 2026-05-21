@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TNA Student Placement Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5E9C8;
+    --dark: #0F0E0B;
+    --dark-2: #1A1915;
+    --dark-3: #252420;
+    --text: #E8E4D8;
+    --text-muted: #8A8472;
+    --a: #4CAF82;
+    --b: #6B9FD4;
+    --c: #E8A84C;
+    --d: #D46B6B;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background-image: 
+      radial-gradient(ellipse 60% 40% at 80% 10%, rgba(201,168,76,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 10% 90%, rgba(201,168,76,0.04) 0%, transparent 50%);
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 36px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .brand-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  .brand-name {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  h1 em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* Card */
+  .card {
+    background: var(--dark-2);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  /* Input group */
+  .input-group {
+    margin-bottom: 20px;
+  }
+
+  .input-group:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  label span {
+    color: var(--text-muted);
+    font-weight: 300;
+    font-size: 12px;
+    margin-left: 6px;
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    background: var(--dark-3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 48px 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+
+  input[type="number"]:focus {
+    border-color: rgba(201,168,76,0.4);
+  }
+
+  input[type="number"]::placeholder {
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .pct-label {
+    position: absolute;
+    right: 14px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    pointer-events: none;
+  }
+
+  /* Grade preview pills */
+  .grade-hint {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 20px;
+    opacity: 0.5;
+  }
+
+  .pill.a { background: rgba(76,175,130,0.15); color: var(--a); border: 1px solid rgba(76,175,130,0.2); }
+  .pill.b { background: rgba(107,159,212,0.15); color: var(--b); border: 1px solid rgba(107,159,212,0.2); }
+  .pill.c { background: rgba(232,168,76,0.15); color: var(--c); border: 1px solid rgba(232,168,76,0.2); }
+  .pill.d { background: rgba(212,107,107,0.15); color: var(--d); border: 1px solid rgba(212,107,107,0.2); }
+
+  /* Divider */
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin: 20px 0;
+  }
+
+  /* No WA toggle */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .toggle-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .toggle {
+    width: 36px;
+    height: 20px;
+    background: var(--dark-3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle.active {
+    background: rgba(201,168,76,0.3);
+    border-color: var(--gold);
+  }
+
+  .toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .toggle.active .toggle-knob {
+    transform: translateX(16px);
+    background: var(--gold);
+  }
+
+  /* Button */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--gold);
+    color: var(--dark);
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 4px;
+  }
+
+  .btn:hover { background: var(--gold-light); }
+  .btn:active { transform: scale(0.99); }
+
+  /* Result */
+  .result {
+    background: var(--dark-2);
+    border-radius: 16px;
+    overflow: hidden;
+    display: none;
+    animation: slideUp 0.3s ease;
+  }
+
+  .result.show { display: block; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .result-grade {
+    font-family: 'DM Serif Display', serif;
+    font-size: 52px;
+    line-height: 1;
+    font-weight: 400;
+  }
+
+  .result-grade.a { color: var(--a); }
+  .result-grade.b { color: var(--b); }
+  .result-grade.c { color: var(--c); }
+  .result-grade.d { color: var(--d); }
+
+  .result-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .result-badge.a { background: rgba(76,175,130,0.15); color: var(--a); border: 1px solid rgba(76,175,130,0.25); }
+  .result-badge.b { background: rgba(107,159,212,0.15); color: var(--b); border: 1px solid rgba(107,159,212,0.25); }
+  .result-badge.c { background: rgba(232,168,76,0.15); color: var(--c); border: 1px solid rgba(232,168,76,0.25); }
+  .result-badge.d { background: rgba(212,107,107,0.15); color: var(--d); border: 1px solid rgba(212,107,107,0.25); }
+
+  .result-body {
+    padding: 20px 28px 24px;
+  }
+
+  .result-desc {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .result-reasoning {
+    background: var(--dark-3);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .reasoning-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .reasoning-steps {
+    list-style: none;
+  }
+
+  .reasoning-steps li {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .reasoning-steps li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 10px;
+  }
+
+  .reasoning-steps li.highlight {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* Reset */
+  .reset-btn {
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 12px;
+    display: none;
+    text-align: center;
+    width: 100%;
+    padding: 6px;
+  }
+
+  .reset-btn.show { display: block; }
+
+  /* Grade reference */
+  .reference {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .ref-item {
+    background: var(--dark-3);
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+
+  .ref-grade {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+
+  .ref-grade.a { color: var(--a); }
+  .ref-grade.b { color: var(--b); }
+  .ref-grade.c { color: var(--c); }
+  .ref-grade.d { color: var(--d); }
+
+  .ref-range {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .error-msg {
+    color: var(--d);
+    font-size: 12px;
+    margin-top: 6px;
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <div class="brand-name">The Nuggets Academy</div>
+    </div>
+    <h1>Student <em>Placement</em> Tool</h1>
+    <p class="subtitle">Enter exam results to determine the correct class level for a new or returning student.</p>
+  </div>
+
+  <div class="card" id="inputCard">
+    <div class="card-title">Exam Results</div>
+
+    <div class="input-group">
+      <label>Previous Year End-of-Year (EOY) Result <span>primary anchor</span></label>
+      <div class="input-wrapper">
+        <input type="number" id="eoyInput" min="0" max="100" placeholder="e.g. 82" />
+        <span class="pct-label">%</span>
+      </div>
+      <div class="grade-hint">
+        <span class="pill a">A: 70–100</span>
+        <span class="pill b">B: 55–69</span>
+        <span class="pill c">C: 45–54</span>
+        <span class="pill d">D: ≤44</span>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="input-group" id="waGroup">
+      <label>Recent Weighted Assessment (WA) Result <span>current snapshot</span></label>
+      <div class="input-wrapper">
+        <input type="number" id="waInput" min="0" max="100" placeholder="e.g. 45" />
+        <span class="pct-label">%</span>
+      </div>
+    </div>
+
+    <div class="toggle-row" onclick="toggleNoWA()" style="margin-top:12px; margin-bottom:4px;">
+      <span class="toggle-label">No WA result available</span>
+      <div class="toggle" id="noWaToggle"><div class="toggle-knob"></div></div>
+    </div>
+
+    <p class="error-msg" id="errorMsg">Please enter a valid EOY result (0–100).</p>
+
+    <button class="btn" onclick="classify()" style="margin-top:20px;">Determine Placement →</button>
+
+    <div class="reference">
+      <div class="ref-item"><div class="ref-grade a">A</div><div class="ref-range">70–100%</div></div>
+      <div class="ref-item"><div class="ref-grade b">B</div><div class="ref-range">55–69%</div></div>
+      <div class="ref-item"><div class="ref-grade c">C</div><div class="ref-range">45–54%</div></div>
+      <div class="ref-item"><div class="ref-grade d">D</div><div class="ref-range">≤44%</div></div>
+    </div>
+  </div>
+
+  <div class="result" id="resultCard">
+    <div class="result-header">
+      <div>
+        <div class="result-label">Recommended Placement</div>
+        <div class="result-grade" id="resultGrade"></div>
+      </div>
+      <div class="result-badge" id="resultBadge"></div>
+    </div>
+    <div class="result-body">
+      <p class="result-desc" id="resultDesc"></p>
+      <div class="result-reasoning">
+        <div class="reasoning-title">How we got here</div>
+        <ul class="reasoning-steps" id="reasoningSteps"></ul>
+      </div>
+    </div>
+  </div>
+
+  <button class="reset-btn" id="resetBtn" onclick="reset()">← Classify another student</button>
+
+</div>
+
+<script>
+  let noWA = false;
+
+  function toggleNoWA() {
+    noWA = !noWA;
+    const toggle = document.getElementById('noWaToggle');
+    const waGroup = document.getElementById('waGroup');
+    const waInput = document.getElementById('waInput');
+    toggle.classList.toggle('active', noWA);
+    waGroup.style.opacity = noWA ? '0.3' : '1';
+    waGroup.style.pointerEvents = noWA ? 'none' : 'auto';
+    if (noWA) waInput.value = '';
+  }
+
+  function getGrade(pct) {
+    if (pct >= 70) return 'A';
+    if (pct >= 55) return 'B';
+    if (pct >= 45) return 'C';
+    return 'D';
+  }
+
+  function dropGrade(grade) {
+    const order = ['A','B','C','D'];
+    const idx = order.indexOf(grade);
+    return order[Math.min(idx + 1, 3)];
+  }
+
+  function bumpGrade(grade) {
+    const order = ['A','B','C','D'];
+    const idx = order.indexOf(grade);
+    return order[Math.max(idx - 1, 0)];
+  }
+
+  function gradeDesc(grade) {
+    const map = {
+      A: 'Strong foundation. Place in the Advanced group.',
+      B: 'Slightly above average. Place in the Intermediate group.',
+      C: 'Borderline. Place in the Foundation group.',
+      D: 'Significant gaps. Place in the Core Support group.'
+    };
+    return map[grade];
+  }
+
+  function classify() {
+    const eoyVal = document.getElementById('eoyInput').value;
+    const waVal = document.getElementById('waInput').value;
+    const errorMsg = document.getElementById('errorMsg');
+
+    if (eoyVal === '' || isNaN(eoyVal) || eoyVal < 0 || eoyVal > 100) {
+      errorMsg.style.display = 'block';
+      return;
+    }
+    errorMsg.style.display = 'none';
+
+    const eoy = parseFloat(eoyVal);
+    const wa = (!noWA && waVal !== '') ? parseFloat(waVal) : null;
+
+    const eoyGrade = getGrade(eoy);
+    let finalGrade = eoyGrade;
+    const steps = [];
+
+    steps.push(`EOY score: ${eoy}% → baseline grade <strong>${eoyGrade}</strong>`);
+
+    if (wa !== null) {
+      const waGrade = getGrade(wa);
+      steps.push(`WA score: ${wa}% → current snapshot grade <strong>${waGrade}</strong>`);
+
+      // Drop rule: WA is below 50% (failing) AND WA grade is lower than EOY grade
+      if (wa < 50 && waGrade !== eoyGrade) {
+        finalGrade = dropGrade(eoyGrade);
+        steps.push(`WA is failing (below 50%) → drop 1 grade from EOY baseline`);
+        steps.push(`Adjusted placement: <strong>${finalGrade}</strong>`);
+      }
+      // Bump up rule: EOY is C or D, WA is 80%+
+      else if ((eoyGrade === 'C' || eoyGrade === 'D') && wa >= 80) {
+        finalGrade = bumpGrade(eoyGrade);
+        steps.push(`WA is significantly strong (80%+) with weak EOY → bump up 1 grade`);
+        steps.push(`Adjusted placement: <strong>${finalGrade}</strong>`);
+      }
+      else {
+        steps.push(`WA does not trigger an adjustment → EOY baseline holds`);
+        steps.push(`Final placement: <strong>${finalGrade}</strong>`);
+      }
+    } else {
+      steps.push(`No WA available → EOY result used as sole indicator`);
+      steps.push(`Final placement: <strong>${finalGrade}</strong>`);
+    }
+
+    // Render
+    const grade = finalGrade.toLowerCase();
+    document.getElementById('resultGrade').textContent = finalGrade;
+    document.getElementById('resultGrade').className = `result-grade ${grade}`;
+    document.getElementById('resultBadge').textContent = ['A','B','C','D'].indexOf(finalGrade) === 0 ? 'Advanced' : finalGrade === 'B' ? 'Intermediate' : finalGrade === 'C' ? 'Foundation' : 'Core Support';
+    document.getElementById('resultBadge').className = `result-badge ${grade}`;
+    document.getElementById('resultDesc').textContent = gradeDesc(finalGrade);
+
+    const ol = document.getElementById('reasoningSteps');
+    ol.innerHTML = steps.map((s, i) => `<li class="${i === steps.length - 1 ? 'highlight' : ''}">${s}</li>`).join('');
+
+    document.getElementById('inputCard').style.display = 'none';
+    document.getElementById('resultCard').classList.add('show');
+    document.getElementById('resetBtn').classList.add('show');
+  }
+
+  function reset() {
+    document.getElementById('eoyInput').value = '';
+    document.getElementById('waInput').value = '';
+    document.getElementById('inputCard').style.display = 'block';
+    document.getElementById('resultCard').classList.remove('show');
+    document.getElementById('resetBtn').classList.remove('show');
+    if (noWA) toggleNoWA();
+  }
+</script>
+</body>
+</html>
